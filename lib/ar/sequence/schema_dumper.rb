@@ -21,9 +21,9 @@ module AR
 
       def sequences(stream)
         sequences = @connection.check_sequences
-        search_path = retrieve_search_path
-
         return if sequences.empty?
+
+        search_path = retrieve_search_path
 
         sequences.each do |seq|
           schema = seq["sequence_schema"]
@@ -37,6 +37,10 @@ module AR
 
           start_value = seq["start_value"]
           increment = seq["increment"]
+          cycle = seq["cycle_option"]
+          minvalue = seq["minimum_value"]
+          maxvalue = seq["maximum_value"]
+          type = seq["data_type"]
 
           options = []
 
@@ -47,6 +51,11 @@ module AR
           if increment && Integer(increment) != 1
             options << "increment: #{increment}"
           end
+
+          options << "cycle: true" if cycle == "YES"
+          options << "minvalue: #{minvalue}"
+          options << "maxvalue: #{maxvalue}"
+          options << "type: :#{type}"
 
           statement = [
             "create_sequence",

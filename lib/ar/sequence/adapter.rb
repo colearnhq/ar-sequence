@@ -22,8 +22,12 @@ module AR
         name = quote_name(name)
 
         sql = ["CREATE SEQUENCE IF NOT EXISTS #{name}"]
+        sql << "AS #{options[:type]}" unless options[:type].nil?
+        sql << "MINVALUE #{options[:minvalue]}" unless options[:minvalue].nil?
+        sql << "MAXVALUE #{options[:maxvalue]}" unless options[:maxvalue].nil?
         sql << "INCREMENT BY #{increment}" if increment
         sql << "START WITH #{options[:start]}" if options[:start]
+        sql << "CYCLE" if options[:cycle] === true
         sql << ";"
         sql << "COMMENT ON SEQUENCE #{name} IS '#{SEQUENCE_COMMENT}';"
 
